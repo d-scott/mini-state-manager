@@ -36,7 +36,9 @@ describe('Store', () => {
                 },
                 stateUpdates: {
                     increment: state => state.count++,
-                    decrement: state => state.count--
+                    decrement: state => state.count--,
+                    incrementBy: (state, payload) => state.count += payload.value,
+                    decrementBy: (state, payload) => state.count -= payload.value
                 }
             });
         });
@@ -102,6 +104,11 @@ describe('Store', () => {
             it('should update the state in the expected way', () => {
                 instance.updateState('decrement');
                 expect(instance.state.count).toEqual(0);
+            });
+
+            it('should update the state in the expected way, using the value in the payload', () => {
+                instance.updateState('incrementBy', {value: 5});
+                expect(instance.state.count).toEqual(5);
             });
 
         });

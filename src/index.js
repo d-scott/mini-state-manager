@@ -1,4 +1,1 @@
-import Store from './store';
-
-export default { Store };
-export { Store };
+export { default as Store } from './store';

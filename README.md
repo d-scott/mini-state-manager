@@ -16,11 +16,26 @@ const store = new Store({
         decrementBy: (state, payload) => state.count -= payload.value
     }
 });
+```
  
+```javascript
 console.log(store.state.count); //0
 store.updateState('increment');
 console.log(store.state.count); //1
+```
  
+```javascript
 store.updateState('incrementBy', { value: 5 });
 console.log(store.state.count); //6
+```
+ 
+```javascript
+store.batchUpdateState({
+    updates: [
+        {type: 'increment'},
+        {type: 'decrementBy', payload: { value: 5 }},
+        {type: 'decrement'}
+    ]
+});
+console.log(store.state.count); //1
 ```

@@ -28,6 +28,13 @@ export default class Store {
         }
     }
 
+    batchUpdateState(options) {
+        options.updates.forEach(update => {
+            this._stateUpdates[update.type](this.state, update.payload);
+        });
+        this._notify();
+    }
+
     register(cb) {
         if (this._registeredCallbacks.indexOf(cb) < 0) {
             this._registeredCallbacks.push(cb);

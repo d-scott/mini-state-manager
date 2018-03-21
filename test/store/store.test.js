@@ -87,6 +87,7 @@ describe('Store', () => {
             });
 
             afterAll(() => {
+                instance.deregister(onUpdate);
                 onUpdate.mockReset();
                 onUpdate = null;
             });
@@ -101,14 +102,42 @@ describe('Store', () => {
                 expect(onUpdate.mock.calls.length).toEqual(1);
             });
 
-            it('should update the state in the expected way', () => {
-                instance.updateState('decrement');
-                expect(instance.state.count).toEqual(0);
-            });
-
             it('should update the state in the expected way, using the value in the payload', () => {
                 instance.updateState('incrementBy', {value: 5});
-                expect(instance.state.count).toEqual(5);
+                expect(instance.state.count).toEqual(6);
+                expect(onUpdate.mock.calls.length).toEqual(2);
+                instance.updateState('decrementBy', {value: 6});
+                expect(instance.state.count).toEqual(0);
+                expect(onUpdate.mock.calls.length).toEqual(3);
+            });
+
+        });
+
+        describe('batched updates', () => {
+
+            let onUpdate;
+            beforeAll(() => {
+                onUpdate = jest.fn();
+                instance.register(onUpdate);
+            });
+
+            afterAll(() => {
+                instance.deregister(onUpdate);
+                onUpdate.mockReset();
+                onUpdate = null;
+            });
+
+            it('should only call the update callback once', () => {
+                instance.batchUpdateState({
+                    updates: [
+                        {type: 'incrementBy', payload: {value: 5}},
+                        {type: 'decrement'},
+                        {type: 'decrementBy', payload: {value: 2}},
+                        {type: 'increment'}
+                    ]
+                });
+                expect(instance.state.count).toEqual(3);
+                expect(onUpdate.mock.calls.length).toEqual(1);
             });
 
         });
